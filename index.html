@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GalaNight Invite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+      background-size: 1000% 1000%;
+      animation: gradientBG 20s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      color: #fff;
+      text-align: center;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #typewriter {
+      font-size: 2.3rem;
+      max-width: 90%;
+      border-right: 3px solid #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        border-color: transparent;
+      }
+    }
+
+    .btn-group {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 15px 25px;
+      margin: 10px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      min-width: 120px;
+    }
+
+    .yes-btn {
+      background: linear-gradient(45deg, #28a745, #85e085);
+      color: white;
+    }
+
+    .no-btn {
+      background: linear-gradient(45deg, #dc3545, #ff8080);
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .popup.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .popup img {
+      max-width: 90%;
+      max-height: 90%;
+      border: 10px solid #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.4);
+      animation: zoomIn 1s ease-out forwards;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    #countdown {
+      position: absolute;
+      top: 20px;
+      font-size: 1.2rem;
+      padding: 0 10px;
+    }
+
+    #muteBtn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      #typewriter {
+        font-size: 1.5rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+
+      #countdown {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="countdown"></div>
+  <div id="typewriter"></div>
+
+  <div class="btn-group">
+    <button class="yes-btn" onclick="showPopup()">Yes 💖</button>
+    <button class="no-btn" onclick="alert('Aww 😢 Maybe next time...')">No 💔</button>
+  </div>
+
+  <div class="popup" id="popup">
+    <img src="original.png" alt="Gala Invite for Jessica">
+  </div>
+
+  <canvas id="confetti-canvas" class="floating"></canvas>
+  <canvas id="sparkle-canvas" class="floating"></canvas>
+  <canvas id="heart-canvas" class="floating"></canvas>
+
+  <audio id="bgMusic" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/20/audio_1c9b8b9d2a.mp3" type="audio/mpeg">
+  </audio>
+  <button id="muteBtn" onclick="toggleMute()">🔊</button>
+
+  <script>
+    const message = "Jessica, will you be my date for the Student Week GalaNight?";
+    const typeTarget = document.getElementById("typewriter");
+    let i = 0;
+    function typeWriter() {
+      if (i < message.length) {
+        typeTarget.textContent += message.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+      }
+    }
+    typeWriter();
+
+    function showPopup() {
+      document.getElementById('popup').classList.add('show');
+      startConfetti();
+      setTimeout(stopConfetti, 6000);
+    }
+
+    const confettiCanvas = document.getElementById("confetti-canvas");
+    const ctx = confettiCanvas.getContext("2d");
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+
+    let confetti = Array.from({ length: 150 }, () => ({
+      x: Math.random() * confettiCanvas.width,
+      y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 10 + 10,
+      color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+      tilt: Math.floor(Math.random() * 10) - 10,
+      tiltAngleIncremental: Math.random() * 0.07 + .05,
+      tiltAngle: 0
+    }));
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r / 2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 4, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 4);
+        ctx.stroke();
+      });
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      confetti.forEach(c => {
+        c.y += Math.cos(c.d) + 1 + c.r / 2;
+        c.tiltAngle += c.tiltAngleIncremental;
+        c.tilt = Math.sin(c.tiltAngle) * 15;
+        if (c.y > confettiCanvas.height) {
+          c.x = Math.random() * confettiCanvas.width;
+          c.y = -20;
+        }
+      });
+    }
+
+    let confettiInterval;
+    function startConfetti() {
+      confettiInterval = setInterval(drawConfetti, 20);
+    }
+
+    function stopConfetti() {
+      clearInterval(confettiInterval);
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+
+    const sparkleCanvas = document.getElementById("sparkle-canvas");
+    const sparkleCtx = sparkleCanvas.getContext("2d");
+    sparkleCanvas.width = window.innerWidth;
+    sparkleCanvas.height = window.innerHeight;
+    const sparkles = [];
+    const sparkleColors = ["#fff", "#ff69b4", "#ffd700", "#add8e6"];
+
+    document.addEventListener("mousemove", (e) => {
+      for (let i = 0; i < 3; i++) {
+        sparkles.push({
+          x: e.clientX,
+          y: e.clientY,
+          radius: Math.random() * 2 + 1,
+          alpha: 1,
+          color: sparkleColors[Math.floor(Math.random() * sparkleColors.length)],
+          speedX: (Math.random() - 0.5) * 2,
+          speedY: (Math.random() - 0.5) * 2,
+        });
+      }
+      heartMouseX = e.clientX;
+      heartMouseY = e.clientY;
+      hearts.push({
+        x: heartMouseX,
+        y: heartMouseY,
+        size: Math.random() * 0.5 + 0.5,
+        speed: Math.random() * 0.5 + 0.5,
+        color: "#ff4d88"
+      });
+    });
+
+    function animateSparkles() {
+      sparkleCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+      for (let i = 0; i < sparkles.length; i++) {
+        let s = sparkles[i];
+        sparkleCtx.beginPath();
+        sparkleCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        sparkleCtx.fillStyle = s.color;
+        sparkleCtx.globalAlpha = s.alpha;
+        sparkleCtx.fill();
+        s.x += s.speedX;
+        s.y += s.speedY;
+        s.alpha -= 0.02;
+        if (s.alpha <= 0) {
+          sparkles.splice(i, 1);
+          i--;
+        }
+      }
+      sparkleCtx.globalAlpha = 1;
+      requestAnimationFrame(animateSparkles);
+    }
+    animateSparkles();
+
+    const heartCanvas = document.getElementById("heart-canvas");
+    const heartCtx = heartCanvas.getContext("2d");
+    heartCanvas.width = window.innerWidth;
+    heartCanvas.height = window.innerHeight;
+    const hearts = [];
+    let heartMouseX = heartCanvas.width / 2;
+    let heartMouseY = heartCanvas.height;
+
+    function drawHeart(x, y, size, color) {
+      heartCtx.save();
+      heartCtx.translate(x, y);
+      heartCtx.scale(size, size);
+      heartCtx.beginPath();
+      heartCtx.moveTo(0, 0);
+      heartCtx.bezierCurveTo(0, -3, -5, -3, -5, 0);
+      heartCtx.bezierCurveTo(-5, 3, 0, 5, 0, 8);
+      heartCtx.bezierCurveTo(0, 5, 5, 3, 5, 0);
+      heartCtx.bezierCurveTo(5, -3, 0, -3, 0, 0);
+      heartCtx.closePath();
+      heartCtx.fillStyle = color;
+      heartCtx.fill();
+      heartCtx.restore();
+    }
+
+    function animateHearts() {
+      heartCtx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+      for (let i = 0; i < hearts.length; i++) {
+        const h = hearts[i];
+        drawHeart(h.x, h.y, h.size, h.color);
+        h.y -= h.speed;
+        h.x += Math.sin(h.y * 0.05) * 0.5;
+        if (h.y < -10) {
+          hearts.splice(i, 1);
+          i--;
+        }
+      }
+      requestAnimationFrame(animateHearts);
+    }
+    animateHearts();
+
+    const countdownTarget = new Date("2025-06-15T20:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = countdownTarget - now;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      countdownEl.innerHTML = `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s left until GalaNight!`;
+    }, 1000);
+
+    const bgMusic = document.getElementById("bgMusic");
+    const muteBtn = document.getElementById("muteBtn");
+    function toggleMute() {
+      bgMusic.muted = !bgMusic.muted;
+      muteBtn.textContent = bgMusic.muted ? "🔇" : "🔊";
+    }
+  </script>
+</body>
+</html>
