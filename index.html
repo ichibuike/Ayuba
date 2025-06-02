@@ -177,7 +177,6 @@
   <button id="muteBtn" onclick="toggleMute()">🔊</button>
 
   <script>
-    // Love Emoji Float
     const emojis = ["💖", "💘", "💕", "❤️", "💗", "💓", "💞"];
     for (let i = 0; i < 30; i++) {
       const e = document.createElement('div');
@@ -193,9 +192,31 @@
       document.getElementById('popup').classList.add('show');
       startConfetti();
       setTimeout(stopConfetti, 6000);
+
+      if (!document.getElementById('downloadBtn')) {
+        const downloadBtn = document.createElement('a');
+        downloadBtn.id = 'downloadBtn';
+        downloadBtn.href = 'original.png';
+        downloadBtn.download = 'GalaNight_Ticket.png';
+        downloadBtn.textContent = '🎟️ Download Your Ticket';
+        downloadBtn.style.position = 'fixed';
+        downloadBtn.style.bottom = '30px';
+        downloadBtn.style.left = '50%';
+        downloadBtn.style.transform = 'translateX(-50%)';
+        downloadBtn.style.background = '#28a745';
+        downloadBtn.style.color = '#fff';
+        downloadBtn.style.padding = '12px 24px';
+        downloadBtn.style.fontSize = '1.1rem';
+        downloadBtn.style.border = 'none';
+        downloadBtn.style.borderRadius = '30px';
+        downloadBtn.style.cursor = 'pointer';
+        downloadBtn.style.zIndex = '200';
+        downloadBtn.style.textDecoration = 'none';
+        downloadBtn.style.boxShadow = '0 0 10px rgba(40, 167, 69, 0.6)';
+        document.body.appendChild(downloadBtn);
+      }
     }
 
-    // Countdown
     const countdownTarget = new Date("2025-06-15T20:00:00").getTime();
     const countdownEl = document.getElementById("countdown");
     setInterval(() => {
@@ -208,12 +229,10 @@
       countdownEl.innerHTML = `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s left until GalaNight!`;
     }, 1000);
 
-    // Confetti
     const confettiCanvas = document.getElementById("confetti-canvas");
     const ctx = confettiCanvas.getContext("2d");
     confettiCanvas.width = window.innerWidth;
     confettiCanvas.height = window.innerHeight;
-
     let confetti = Array.from({ length: 150 }, () => ({
       x: Math.random() * confettiCanvas.width,
       y: Math.random() * confettiCanvas.height - confettiCanvas.height,
@@ -260,7 +279,6 @@
       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     }
 
-    // Sparkle & Heart (already integrated and unchanged)
     const sparkleCanvas = document.getElementById("sparkle-canvas");
     const sparkleCtx = sparkleCanvas.getContext("2d");
     sparkleCanvas.width = window.innerWidth;
